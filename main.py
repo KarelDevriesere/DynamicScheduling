@@ -21,13 +21,26 @@ NrTeams = [18,36]
 Prizes = {18: [
                 [[0,1],[2,15],[16,17]],
                 [[0,5],[6,11],[12,17]],
-                [[0,7],[8,9],[10,17]]
+                [[0,7],[8,9],[10,17]],
+                [
+                    [0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5], 
+                    [6, 6], [7, 7], [8, 8], [9, 9], [10, 10], [11, 11], 
+                    [12, 12], [13, 13], [14, 14], [15, 15], [16, 16], [17, 17]
+                ]
               ],
           36: [
                 [[0,3],[4,31],[32,35]],
                 [[0,11],[12,23],[24,35]],
-                [[0,15],[16,17],[18,35]]
-              ]
+                [[0,15],[16,17],[18,35]],
+                [
+                    [0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5], 
+                    [6, 6], [7, 7], [8, 8], [9, 9], [10, 10], [11, 11], 
+                    [12, 12], [13, 13], [14, 14], [15, 15], [16, 16], [17, 17], 
+                    [18, 18], [19, 19], [20, 20], [21, 21], [22, 22], [23, 23], 
+                    [24, 24], [25, 25], [26, 26], [27, 27], [28, 28], [29, 29], 
+                    [30, 30], [31, 31], [32, 32], [33, 33], [34, 34], [35, 35]
+                ]
+             ]
 }
 
 class Team:
@@ -58,9 +71,11 @@ def WeightEdgeEP(i,h_team,a_team):
 
         if p_e_min >= p_i + 4:
             w = 2
-        if p_e_min == p_i+3:
+        elif p_e_min == p_i+3:
             w = 1
-        elif p_e_max >= p_i + 3 and p_e_min <= p_i+2:
+        elif p_e_max >= p_i + 4:
+            w = 1
+        elif p_e_max == p_i+3 and p_e_min >= p_i+1:
             w = 1
         else:
             w = 0
@@ -84,13 +99,17 @@ def WeightEdgeGPP(i, h_team, a_team):
         
         if p_e_min >= p_i - 1:
             w = 2
-        elif p_e_min < p_i-2 and p_e_max >= p_i-3:
+        elif p_e_max >= p_i:
+            if p_e_min >= p_i-3:
+                w = 2 
+            else:
+                w = 1
+        elif p_e_max >= p_i-3:
             w = 1
         else:
             w = 0
             
     return w
-
 
 class IP:
     def __init__(self, Teams, M_bool, Prizes): 
@@ -169,10 +188,18 @@ class IP:
         for m, match in enumerate(self.M):
             if self.x[m].X > 0.9:
                 print(f'Select match {match[0].index},{match[1].index}')
-        for p in range(len(Prizes)):
+        for p in range(len(self.Prizes)):
             for i in self.Teams:
-                if self.z[i.index, p].X > 0.9:
+                if self.z[i.index, p].X > 0.1:
                     print(f"Team {i.index} has prize {p} fixed!")
+        for i in self.Teams:
+            for p, [b_start, b_end] in enumerate(self.Prizes):
+                if p < len(self.Prizes)-1:
+                    k = b_end+1 # b_end is the position in the interval
+                    if self.y_ep[i.index, k].X > 0.1:
+                        print(f'{i.index} is eliminated for the top {k}')
+                    if self.y_gpp[i.index, k].X > 0.1:
+                        print(f'{i.index} is guaranteed to finish in the top {k}')
 
     def ReturnLastRound(self):
         round_ = []
@@ -212,6 +239,9 @@ def get_sampled_distributions(n,d):
 
     if d == 4:
         return np.random.choice(real_lambda_h_CL, size=n, replace=True)
+
+    if d == 5:
+        return [1]*n
 
 
 def Circle(teams,r):
@@ -285,7 +315,7 @@ def test_schedule_feasible(Teams, schedule):
         sys.exit()
 
 
-def sample_match_outcome(h_team, a_team, home_adv, rng):
+def sample_match_outcome(h_team, a_team, rng):
     lambda_home = h_team.home_strength # no home advantage
     lambda_away = a_team.away_strength 
 
@@ -299,6 +329,22 @@ def sample_match_outcome(h_team, a_team, home_adv, rng):
     else:
         h_team.points += 1
         a_team.points += 1
+
+
+def NrTeamsPrizeFixedEveryPositionIsPrize(Teams):
+    nr = 0
+    n = len(Teams)-1
+    for i, tm in enumerate(Teams):
+        if i == 0:
+            if tm.points > Teams[1].points+3:
+                nr += 1
+        elif i == n:
+            if tm.points+3 < Teams[n-1].points:
+                nr += 1
+        else:
+            if tm.points > Teams[i+1].points+3 and tm.points+3 < Teams[i-1].points:
+                nr += 1
+    return nr
 
 
 def NrTeamsPrizeFixed(round_, Prizes):
@@ -331,27 +377,20 @@ if __name__ == '__main__':
     r = int(sys.argv[2]) # nr of rounds
     b = int(sys.argv[3]) # prizes
     sd = int(sys.argv[4]) # distribution from which we sample strength values
-    home_adv = 0.1
-    print(f"Test configuration with {n} teams, {r} rounds, set of prizes {b} and strength distribution {sd}")
-    rng = np.random.default_rng(42)
-    nr_simulations = 100
-
-    for i in range(1, 16):
-        print(f"\\begin{{subfigure}}{{0.3\\textwidth}}\n  \\includegraphics[width=\\linewidth]{{boxplot{i}.png}}\n  \\caption{{Test {i}}}\n\\end{{subfigure}}", end="")
-        if i % 3 == 0:
-            print("\n\n\\vspace{1em}\n")
-        else:
-            print("\\hfill")
-
-    breakpoint()
+    seed = int(sys.argv[5]) # seed
+    nr_simulations = int(sys.argv[6]) # number of simulations
+    print(f"Test configuration with {n} teams, {r} rounds, set of prizes {b} and strength distribution {sd}, with seed {seed} and {nr_simulations} simulations")
+    rng = np.random.default_rng(seed)
 
     B = Prizes[n][b]
 
     data = {"diff": [], "static": [], "dynamic": []}
 
-    schedules = VizingSchedules(n, r)
+    schedules = VizingSchedules(n, r) # we only have 100k vizing schedules!!
 
     for simul in range(nr_simulations):
+        if simul > 0 and simul % 100 == 0:
+            print(simul)
         # sample n strength values from the distribution d
         samples = get_sampled_distributions(n,sd)
         # construct the teams
@@ -375,13 +414,13 @@ if __name__ == '__main__':
         # play all matches until the final round 
         for s in range(r-1):
             for match in schedule[s]:
-                sample_match_outcome(match[0], match[1], home_adv, rng)
+                sample_match_outcome(match[0], match[1], rng)
                 M[match[0].index][match[1].index] = False
                 M[match[1].index][match[0].index] = False
 
         # rank the teams
-        Teams.sort(key=lambda team: team.points, reverse=True)
         '''
+        Teams.sort(key=lambda team: team.points, reverse=True)
         for tm in Teams:
             print(f'{tm.index}: {tm.points}')
         '''
@@ -393,7 +432,11 @@ if __name__ == '__main__':
         for match in schedule[-1]:
             print(f"{match[0].index}, {match[1].index}")
         '''
-        nr_static = NrTeamsPrizeFixed(schedule[-1], B)
+        if b < 3:
+            nr_static = NrTeamsPrizeFixed(schedule[-1], B)
+        else:
+            Teams.sort(key=lambda team: team.points, reverse=True)
+            nr_static = NrTeamsPrizeFixedEveryPositionIsPrize(Teams)
         # print(f"Nr teams whose prizes are fixed = {nr_static}")
         # now, construct a new schedule with the goal to minimize the number of teams with fixed prizes
         ip = IP(Teams, M, B)
@@ -401,11 +444,19 @@ if __name__ == '__main__':
         # print(f"{nr_dynamic} teams their prizes are fixed according to IP!!")
         # ip.print_solution()
         schedule = ip.ReturnLastRound()
-
-        nr_dynamic2 = NrTeamsPrizeFixed(schedule[-1], B)
+        
+        if b < 3:
+            nr_dynamic2 = NrTeamsPrizeFixed(schedule[-1], B)
+        else:
+            nr_dynamic2 = NrTeamsPrizeFixedEveryPositionIsPrize(Teams)
         if nr_dynamic != nr_dynamic2:
             print(f"{nr_dynamic} != {nr_dynamic2}")
-            break
+            Teams.sort(key=lambda team: team.points, reverse=True)
+            for tm in Teams:
+                print(f'{tm.index}: {tm.points}')
+            print(f"IP:")
+            ip.print_solution()
+            sys.exit()
         # print(f"Nr teams whose prizes are fixed = {nr_dynamic2}")
         data["diff"].append(nr_static-nr_dynamic)
         data["static"].append(nr_static)
@@ -416,22 +467,75 @@ if __name__ == '__main__':
     # print(f"Min: {minimum}, Max: {maximum}, Mean: {mean}")
 
     u_stat, p_val = stats.mannwhitneyu(data["static"], data["dynamic"])
+    # Is this data not related and should we not do a wilcoxon signed-rank test instead?
 
-    # boxplot:
+    # Nice boxplots:
+
     data_boxplot = pd.DataFrame({
         'Setting': ['static'] * len(data['static']) + ['dynamic'] * len(data['dynamic']),
         'Rounds': data['static'] + data['dynamic']
     })
-    plt.figure(figsize=(8, 6))
-    sns.set_theme(style="whitegrid")
 
-    colors = {'static': '#5DADE2', 'dynamic': '#F39C12'}
-    sns.boxplot(x='Setting', y='Rounds', data=data_boxplot, palette=colors, width=0.7)
-    sns.swarmplot(data=data_boxplot, x="Setting", y="Rounds", color="black", alpha=0.7, size=3.5)
+    fig, ax = plt.subplots(figsize=(4, 4))
+    sns.set_theme(style="ticks")
+
+    dark_green = '#1E8449'
+    dark_purple = '#BA4A00'
+    pal = {'static': dark_green, 'dynamic': dark_purple}
+
+    light_green = '#A9DFBF'
+    light_purple = '#EDBB99'
+    face_pal = {'static': light_green, 'dynamic': light_purple}
+
+    hue_order = ['static', 'dynamic']
+
+    boxprops = {'edgecolor': 'k', 'linewidth': 2}
+    lineprops = {'color': 'k', 'linewidth': 2}
+
+    boxplot_kwargs = {
+        'boxprops': boxprops, 
+        'medianprops': lineprops,
+        'whiskerprops': lineprops, 
+        'capprops': lineprops,
+        'width': 0.9, 
+        'gap': 0.0,
+        'palette': face_pal,
+        'hue_order': hue_order
+    }
+
+    stripplot_kwargs = {
+        'edgecolor': 'k',
+        'linewidth': 0.6, 
+        'size': 4, 
+        'alpha': 0.8,
+        'palette': pal, 
+        'hue_order': hue_order,
+    }
+
+    sns.boxplot(
+        x='Setting', y='Rounds', hue='Setting', data=data_boxplot, 
+        ax=ax, fliersize=0, **boxplot_kwargs
+    )
+
+    sns.stripplot(
+        x='Setting', y='Rounds', hue='Setting', data=data_boxplot, 
+        ax=ax, dodge=True, jitter=0.2, **stripplot_kwargs
+    )
+
+    if ax.legend_ is not None:
+        ax.legend_.remove()
 
     plt.ylim(0, n)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
+
     plt.title('')
+    plt.xlabel('')
     plt.ylabel('')
+
+    sns.despine()
+    plt.tight_layout()
+
     Figure_name = os.path.join("Figures", "n" + str(n) + "_r" + str(r) + "_b" + str(b) + "_sd" + str(sd))
     plt.savefig(Figure_name)
 
