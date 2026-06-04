@@ -453,8 +453,8 @@ def AnalyzeResults():
 
 
 if __name__ == '__main__':
-    AnalyzeResults()
-    breakpoint()
+    # AnalyzeResults() # outcomment to analyze results
+    # breakpoint()
     n = int(sys.argv[1]) # nr of teams
     r = int(sys.argv[2]) # nr of rounds
     b = int(sys.argv[3]) # prizes
@@ -547,76 +547,6 @@ if __name__ == '__main__':
 
     u_stat, p_val = stats.mannwhitneyu(data["static"], data["dynamic"])
     # Is this data not related and should we not do a wilcoxon signed-rank test instead?
-
-    # Nice boxplots:
-
-    data_boxplot = pd.DataFrame({
-        'Setting': ['static'] * len(data['static']) + ['dynamic'] * len(data['dynamic']),
-        'Rounds': data['static'] + data['dynamic']
-    })
-
-    fig, ax = plt.subplots(figsize=(4, 4))
-    sns.set_theme(style="ticks")
-
-    dark_green = '#1E8449'
-    dark_purple = '#BA4A00'
-    pal = {'static': dark_green, 'dynamic': dark_purple}
-
-    light_green = '#A9DFBF'
-    light_purple = '#EDBB99'
-    face_pal = {'static': light_green, 'dynamic': light_purple}
-
-    hue_order = ['static', 'dynamic']
-
-    boxprops = {'edgecolor': 'k', 'linewidth': 2}
-    lineprops = {'color': 'k', 'linewidth': 2}
-
-    boxplot_kwargs = {
-        'boxprops': boxprops, 
-        'medianprops': lineprops,
-        'whiskerprops': lineprops, 
-        'capprops': lineprops,
-        'width': 0.9, 
-        'gap': 0.0,
-        'palette': face_pal,
-        'hue_order': hue_order
-    }
-
-    stripplot_kwargs = {
-        'edgecolor': 'k',
-        'linewidth': 0.6, 
-        'size': 4, 
-        'alpha': 0.8,
-        'palette': pal, 
-        'hue_order': hue_order,
-    }
-
-    sns.boxplot(
-        x='Setting', y='Rounds', hue='Setting', data=data_boxplot, 
-        ax=ax, fliersize=0, **boxplot_kwargs
-    )
-
-    sns.stripplot(
-        x='Setting', y='Rounds', hue='Setting', data=data_boxplot, 
-        ax=ax, dodge=True, jitter=0.2, **stripplot_kwargs
-    )
-
-    if ax.legend_ is not None:
-        ax.legend_.remove()
-
-    plt.ylim(0, n)
-    plt.xticks(fontsize=16)
-    plt.yticks(fontsize=16)
-
-    plt.title('')
-    plt.xlabel('')
-    plt.ylabel('')
-
-    sns.despine()
-    plt.tight_layout()
-
-    Figure_name = os.path.join("Figures", "n" + str(n) + "_r" + str(r) + "_b" + str(b) + "_sd" + str(sd))
-    plt.savefig(Figure_name)
 
     folder = "Results"
     file_name = "n" + str(n) + "_r" + str(r) + "_b" + str(b) + "_sd" + str(sd) + '.txt'
