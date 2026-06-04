@@ -18,10 +18,11 @@ from gurobipy import GRB
 real_lambda_h_CL = [1.33, 4.0, 1.67, 1.67, 1.67, 2.33, 0.67, 0.33, 1.0, 0.67, 0.33, 2.0, 3.0, 1.0, 0.33, 1.0, 1.67, 1.0, 2.0, 2.33, 1.33, 2.33, 1.33, 2.33, 1.33, 2.0, 2.33, 0.33, 0.67, 0.0, 0.67, 1.67, 1.33, 1.67, 1.33, 0.67, 1.0, 2.67, 3.0, 2.0, 2.33, 1.67, 1.33, 1.67, 1.67, 0.67, 1.0, 1.0, 3.0, 1.33, 1.67, 1.0, 1.67, 0.33, 2.0, 2.0, 1.0, 1.0, 1.33, 2.67, 1.0, 1.67, 0.67, 1.0, 1.67, 2.33, 0.67, 3.0, 2.67, 1.0, 0.67, 2.0, 0.67, 3.0, 4.0, 0.33, 2.0, 1.0, 1.67, 1.33, 1.0, 0.33, 3.0, 1.67, 1.0, 4.0, 1.33, 2.0, 1.67, 1.33, 1.0, 0.67, 2.33, 1.67, 1.0, 0.67, 2.0, 2.33, 1.67, 1.67, 1.67, 1.33, 1.0, 2.33, 1.67, 0.67, 1.0, 1.0, 1.0, 0.67, 1.0, 0.67, 2.0, 2.0, 0.67, 0.67, 1.0, 1.67, 2.0, 1.0, 1.33, 1.67, 2.33, 0.67, 0.33, 1.67, 1.0, 2.67, 1.67, 1.67, 1.0, 2.67, 1.33, 2.67, 1.33, 0.33, 1.33, 0.67, 2.0, 1.0, 1.67, 1.0, 1.67, 0.67, 1.33, 1.67, 1.0, 0.33, 2.67, 2.0, 2.33, 0.33, 0.67, 1.33, 0.0, 1.67, 1.0, 0.67, 0.33, 1.33, 0.67, 2.67, 2.67, 0.67, 2.67, 1.33, 1.33, 1.0, 1.67, 1.33, 4.67, 0.33, 1.0, 2.0, 0.67, 1.0, 0.67, 3.0, 3.0, 0.67, 2.0, 3.33, 1.67, 3.0, 2.33, 2.67, 1.67, 0.0, 1.67, 1.33, 0.33, 0.67, 1.67, 2.67, 1.33, 4.33, 1.33, 2.33, 0.0, 1.67, 1.0, 1.67, 0.67, 0.67, 0.33, 0.67, 1.0, 0.67, 3.33, 3.67, 1.0, 1.33, 1.33, 1.0, 2.67, 0.33, 2.0, 1.33, 1.0, 2.0, 1.33, 1.0, 0.67, 2.0, 1.67, 1.33, 1.33, 2.67, 1.33, 1.67, 4.0, 1.0, 0.33, 2.33, 3.67, 1.0, 1.33, 1.33, 0.67, 0.67, 1.33, 1.33, 3.0, 1.67, 3.33, 2.33, 2.0, 1.67, 0.33, 1.67, 2.0, 0.67, 1.0, 1.67, 0.33, 0.67, 3.0, 0.67, 2.33, 1.67, 4.33, 0.67, 1.67, 2.33, 1.67, 0.33, 1.0, 1.33, 1.0, 2.0, 1.67, 0.67, 1.33, 0.67, 3.33, 3.33, 1.67, 2.0, 2.0, 1.67, 0.67, 3.33, 0.0, 2.0, 1.67, 0.67, 0.67, 1.67, 2.33, 2.33, 2.0, 1.0, 2.0, 1.67, 3.33, 2.33, 3.0, 2.33, 0.67, 1.67, 1.67, 0.33, 0.67, 0.67, 1.67, 3.33, 3.33, 1.33, 0.33, 1.67, 1.0, 1.67, 1.0, 0.67, 2.33, 1.0, 0.67, 3.0, 2.67, 0.67, 3.0, 3.67, 2.67, 1.33, 0.67, 4.67, 0.67, 2.33, 1.33, 2.33, 1.33, 0.33, 1.33, 1.33, 1.0, 0.33, 1.33, 2.33, 1.67, 1.0, 1.67, 2.33, 2.33, 2.0, 2.0, 1.0, 4.33, 0.33, 2.0, 1.33, 1.0, 1.33, 3.0, 3.67, 1.0, 0.0, 1.67, 2.0, 1.0, 2.0, 2.33, 1.33, 1.33, 0.67, 0.33, 1.33, 1.33, 1.33, 3.33, 1.67, 5.0, 1.0, 1.0, 2.0, 1.0, 3.33, 2.0, 1.0, 2.67, 1.0, 2.33, 1.67, 0.33, 1.67, 2.33, 1.0, 2.33, 1.67, 4.0, 2.33, 1.0, 2.67, 3.0, 0.67, 1.67, 1.33, 3.0, 0.33, 0.67, 2.67, 3.0, 5.0, 3.33, 1.33, 2.67, 1.33, 2.33, 1.0, 0.67, 1.33, 0.33, 2.33, 1.33, 0.33, 0.33, 0.33, 2.33, 2.67, 1.0, 1.67, 3.0, 2.0, 1.67, 1.0, 1.67, 0.33, 1.0, 2.0, 1.33, 2.67, 0.67, 0.67, 2.33, 1.67, 2.67, 1.67, 1.0, 3.33, 0.33, 2.33, 1.33, 1.33, 0.33, 2.33, 1.67, 2.67, 1.33, 1.0, 2.67, 3.67, 2.67, 2.67, 1.0, 2.0, 0.67, 1.33, 0.33, 3.33, 3.0, 0.33, 1.67, 0.33, 1.67, 1.0, 2.67, 2.33, 1.33, 1.67, 1.0, 2.0, 2.0, 1.33, 1.67, 0.67, 2.0, 1.67, 2.0, 0.67, 2.33, 0.67, 3.0, 1.0, 2.33, 2.67, 1.33, 1.33, 3.0, 0.67, 0.67, 0.67, 1.0, 1.0, 0.67, 1.0, 0.33, 1.67, 2.33, 1.67, 2.33, 1.67, 2.33, 3.33, 1.0, 2.0, 1.33, 0.67, 2.67, 1.33, 1.0, 1.33, 0.33, 1.0, 1.67, 1.33, 4.33, 0.33, 2.33, 3.0, 2.0, 1.33, 2.0, 2.0, 1.33, 0.33, 1.67, 0.33, 2.0, 0.33, 1.67, 1.67, 1.0, 2.33, 1.67, 4.0, 3.33, 2.67, 1.0, 0.67, 3.0, 0.67, 2.33, 1.0, 0.33, 1.0, 3.33, 1.33, 3.0, 0.33, 1.67, 3.33, 2.33, 1.0, 2.0, 0.67, 0.67, 2.33, 1.33, 2.33, 0.33, 1.33, 3.0, 1.67, 2.0, 3.67, 1.33, 1.33, 1.33, 2.67, 1.67, 2.0, 0.67, 1.67, 1.0, 0.67, 0.67, 1.0, 1.0, 2.0, 1.67, 3.0, 3.67, 1.33, 1.67, 1.0, 2.0, 1.33, 2.33, 1.0, 2.0, 3.0, 1.67, 2.0, 1.0, 1.33, 1.33, 4.0, 1.0, 2.0, 1.33, 2.67, 0.33, 1.0, 1.67, 1.0, 1.67, 1.33, 2.0, 2.0]
 
 NrTeams = [18,36]
+NrRounds = {18: [6,9], 36: [8,14]}
 Prizes = {18: [
                 [[0,1],[2,15],[16,17]],
                 [[0,5],[6,11],[12,17]],
-                [[0,7],[8,9],[10,17]],
+                [[0,7],[8,15],[16,17]],
                 [
                     [0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5], 
                     [6, 6], [7, 7], [8, 8], [9, 9], [10, 10], [11, 11], 
@@ -31,7 +32,7 @@ Prizes = {18: [
           36: [
                 [[0,3],[4,31],[32,35]],
                 [[0,11],[12,23],[24,35]],
-                [[0,15],[16,17],[18,35]],
+                [[0,7],[8,23],[24,35]],
                 [
                     [0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5], 
                     [6, 6], [7, 7], [8, 8], [9, 9], [10, 10], [11, 11], 
@@ -372,7 +373,88 @@ def NrTeamsPrizeFixed(round_, Prizes):
     return nr
 
 
+def PrintData(d_diff, d):
+    min_key = ""
+    max_key = ""
+    for key in d_diff:
+        # print(f"{key}: min = {min(d_diff[key])}, max = {max(d_diff[key])}, mean = {sum(d_diff[key]) / len(d_diff[key])}")
+        # print(f"{key}: min_static = {min(d['static'][key])}, min_dynamic = {min(d['dynamic'][key])}, max_static = {max(d['static'][key])}, max_dynamic = {max(d['dynamic'][key])}, mean_static = {sum(d['static'][key]) / len(d['static'][key])}, mean_dynamic = {sum(d['dynamic'][key]) / len(d['dynamic'][key])}")
+        print(f"{key} & {round(sum(d['static'][key]) / len(d['static'][key]),2)} & {round(sum(d['dynamic'][key]) / len(d['dynamic'][key]),2)} & {round(sum(d_diff[key]) / len(d_diff[key]),2)} & {round(min(d_diff[key]),2)} & {round(max(d_diff[key]),2)} \\\\")
+
+def AnalyzeResults():
+    # I now saved, for each configuration, the mean static and mean dynamic, so I can compute the percentage!!
+    # Compute the average improvement of dynamic vs static scheduling, together with the best and worst improving configuration
+    data = {"static": {}, "dynamic": {}}
+    data_diff = {}
+    data_teams = {"static": {"18_6": [], "18_9": [], "36_8": [], "36_14": []},
+        "dynamic": {"18_6": [], "18_9": [], "36_8": [], "36_14": []}}
+    data_teams_diff = {"18_6": [], "18_9": [], "36_8": [], "36_14": []}
+    data_strength = {"static": {s : [] for s in range(6)}, "dynamic": {s : [] for s in range(6)}}
+    data_strength_diff = {s : [] for s in range(6)}
+    data_prize = {"static": {b : [] for b in range(3)}, "dynamic": {b : [] for b in range(3)}}
+    data_prize_diff = {b : [] for b in range(3)} 
+    # we have several effects: nr of teams and rounds, set of prizes and strength of teams
+    for n in NrTeams:
+        for r in NrRounds[n]:
+            nr_b = 2
+            if n == 36:
+                nr_b = 3
+            for b in range(nr_b):
+                for s in range(6):
+                    config = "n" + str(n) + "_r" + str(r) + "_b" + str(b) + "_sd" + str(s)
+                    file = config + ".txt"
+                    file_path = os.path.join("Results", file)
+                    with open(file_path, "r") as file:
+                        first_line = file.readline().strip()
+                        values = first_line.split(",") # static, dynamic
+                    nr_static = round((float(values[0]) / float(n))*100,3)
+                    nr_dynamic = round((float(values[1]) / float(n))*100,3)
+                    delta = nr_static-nr_dynamic
+                    data["static"][config] = nr_static 
+                    data["dynamic"][config] = nr_dynamic
+                    data_diff[config] = delta
+                    data_teams["static"][str(n)+"_"+str(r)].append(nr_static)
+                    data_teams["dynamic"][str(n)+"_"+str(r)].append(nr_dynamic)
+                    data_teams_diff[str(n)+"_"+str(r)].append(delta)
+                    data_strength["static"][s].append(nr_static)
+                    data_strength["dynamic"][s].append(nr_dynamic)
+                    data_strength_diff[s].append(delta)
+                    data_prize["static"][b].append(nr_static)
+                    data_prize["dynamic"][b].append(nr_dynamic)
+                    data_prize_diff[b].append(delta)
+
+    # print(f"Per nr_teams_and_nr_rounds:")
+    PrintData(data_teams_diff, data_teams)
+
+    # print(f"Per prize:")
+    PrintData(data_prize_diff, data_prize)
+
+    # print(f"Per strength:")
+    PrintData(data_strength_diff, data_strength)
+
+    min_config = min(data_diff, key=data_diff.get)
+    max_config = max(data_diff, key=data_diff.get)
+    mean_value = sum(data_diff.values())/len(data_diff)
+    print(f"Improvement of dynamic vs static:")
+    print(f"min = {data_diff[min_config]} ({min_config}), max = {data_diff[max_config]} ({max_config}) and mean = {mean_value}")
+    breakpoint()
+    
+    min_config_static = min(data["static"], key=data["static"].get)
+    max_config_static = max(data["static"], key=data["static"].get)
+    mean_value_static = sum(data["static"].values())/len(data["static"])
+
+    min_config_dynamic = min(data["dynamic"], key=data["dynamic"].get)
+    max_config_dynamic = max(data["dynamic"], key=data["dynamic"].get)
+    mean_value_dynamic = sum(data["dynamic"].values())/len(data["dynamic"])
+
+    #print(f"min static = {data['static'][min_config_static]}, min_dynamic = {data['dynamic'][min_config_dynamic]}, max_static = {data['static'][max_config_static]}, max_dynamic = {data['dynamic'][max_config_dynamic]}, mean_static = {mean_value_static}, mean_dynamic = {mean_value_dynamic}")
+    print(f"Overall & {round(mean_value_static,2)} & {round(mean_value_dynamic,2)} & {round(mean_value,2)} & {round(data_diff[min_config],2)} & {round(data_diff[max_config],2)} \\\\")
+
+
+
 if __name__ == '__main__':
+    AnalyzeResults()
+    breakpoint()
     n = int(sys.argv[1]) # nr of teams
     r = int(sys.argv[2]) # nr of rounds
     b = int(sys.argv[3]) # prizes
@@ -389,8 +471,6 @@ if __name__ == '__main__':
     schedules = VizingSchedules(n, r) # we only have 100k vizing schedules!!
 
     for simul in range(nr_simulations):
-        if simul > 0 and simul % 100 == 0:
-            print(simul)
         # sample n strength values from the distribution d
         samples = get_sampled_distributions(n,sd)
         # construct the teams
@@ -461,9 +541,8 @@ if __name__ == '__main__':
         data["diff"].append(nr_static-nr_dynamic)
         data["static"].append(nr_static)
         data["dynamic"].append(nr_dynamic)
-    minimum = min(data["diff"])
-    maximum = max(data["diff"])
-    mean = sum(data["diff"]) / len(data["diff"])
+    mean_static = sum(data["static"]) / len(data["static"])
+    mean_dynamic = sum(data["dynamic"]) / len(data["dynamic"])
     # print(f"Min: {minimum}, Max: {maximum}, Mean: {mean}")
 
     u_stat, p_val = stats.mannwhitneyu(data["static"], data["dynamic"])
@@ -545,7 +624,4 @@ if __name__ == '__main__':
 
     file_path = os.path.join(folder, file_name)
     with open(file_path, "w") as file:
-        file.write(f"{minimum},{maximum},{mean},")
-        file.write(f"{round(u_stat,1)},{round(p_val,4)}")
-
-    # try to read the three values!
+        file.write(f"{round(mean_static,4)},{round(mean_dynamic,4)},{round(u_stat,1)},{round(p_val,4)}")
